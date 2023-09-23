@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	<br>
+	<h3 style="text-align:left;"><b>File Upload</b></h3>
+	<form method="POST" enctype="multipart/form-data">
+		<p>Please provide the file and a suitable title</p>
+		<br>
+			{% csrf_token %}
+			{{form.as_p}}
+
+		<button style="background:#b71c1c; color:white" class="btn btn-outline-info" type="submit">Upload</button>
+	</form>
+
+{% endblock %}

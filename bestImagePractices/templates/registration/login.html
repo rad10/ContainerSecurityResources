@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	<br>
+	<h3 style="text-align:left;"><b>Login</b></h3>
+	<div class="container">
+		<form method="POST">
+			{% csrf_token %}
+			{{form.as_p}}
+				<button style="background-color:#b71c1c; color:white" class="btn btn-outline-info" type="submit">Login</button>
+			</form>
+		Don't have an account? <a href="/register" target="blank"><strong>Apply for an account here</strong></a><br>
+
+	</div>
+{% endblock %}

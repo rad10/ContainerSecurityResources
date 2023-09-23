@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+{% load static %}
+
+
+<html lang="en">
+  <!--
+    GCode Viewer - Original Design by Joe Walnes
+    https://github.com/joewalnes/gcode-viewer
+  -->
+  <head>
+    <meta charset="utf-8">
+    <title>GCode Viewer</title>
+    <link rel="stylesheet" href="{% static 'templates/lib/bootstrap.min.css' %}">
+    <style>
+      #renderArea {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 40px;
+        background-color: #000000;
+      }
+    </style>
+    <!-- 3rd party libs -->
+    <script src="{% static 'templates/libs/modeling/lib/modernizr.custom.93389.js' %}"></script>
+    <script src="{% static 'templates/libs/modeling/lib/jquery-1.7.1.min.js' %}"></script>
+    <script src="{% static 'templates/libs/modeling/lib/bootstrap-modal.js' %}"></script>
+    <script src="{% static 'templates/libs/modeling/lib/sugar-1.2.4.min.js' %}"></script>
+    <script src="{% static 'templates/libs/modeling/lib/Three.js' %}"></script>
+    <!-- Custom code -->
+    <script src="{% static 'templates/libs/modeling/gcode-parser.js' %}"></script>
+    <script src="{% static 'templates/libs/modeling/gcode-model.js' %}"></script>
+    <script src="{% static 'templates/libs/modeling/renderer.js' %}"></script>
+    <script src="{% static 'templates/libs/modeling/ui.js' %}"></script>
+
+
+  </head>
+  <body onload="javascript:openGCodeFromPath('/uploads/{{ file.file.name }}')">
+
+    <!-- Top bar -->
+
+    <div class="navbar navbar-fixed-top">
+      
+        <div class="container-fluid">
+          <span class="brand" href="/">Remote Printing Preview</span>
+          <ul class="nav">
+            <li><a href="/" target="_blank">Home</a></li>
+	    <li class="nav-item border-end border-1 border-dark"><a class="nav-link" href="/accounts/logout">Logout</a></li>
+            <li class="nav-item border-end border-1 border-dark"><a class="nav-link" href="/upload">Upload a File</a></li>
+            <li><a href="/queue">Queue</a></li>
+            <li><a href="javascript:about()">About</a></li>
+          </ul>
+          <ul class="nav pull-right">
+            
+            
+          </ul>
+        </div>
+      
+    </div>
+
+    <!-- WebGL rendering area -->
+    <div id="renderArea"></div>
+
+    <div class="modal" id="openModal" style="display: none">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">&times;</a>
+        <h3>Open GCode</h3>
+      </div>
+      <div class="modal-body">
+        <h4>File</h4>
+
+        <ul>
+          <li><a href="javascript:openGCodeFromPath('/uploads/{{ file.file.name }}')">{{ file.title }}</a></li>
+
+        </ul>
+
+        <p>To view your own model, drag a gcode file from your desktop and drop it in this window.</p>
+      </div>
+      <div class="modal-footer">
+        <a class="btn" data-dismiss="modal">Cancel</a>
+      </div>
+    </div>
+
+    <!-- 'About' dialog'-->
+    <div class="modal fade" id="aboutModal" style="display: none">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">&times;</a>
+        <h3>About GCode Viewer</h3>
+      </div>
+      <div class="modal-body">
+        <p>This is a viewer for <a href="http://en.wikipedia.org/wiki/G-code" target="_new">GCode</a>
+        files, which contain commands sent to a 3D printer.</p>
+
+        <p>This viewer shows the operations the machine will take.</p>
+
+        <p>Drag the mouse to rotate the model. Hold down 'S' to zoom.</p>
+
+        <p>To view your own model, drag a gcode file from your desktop and drop it in this window.</p>
+
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary" data-dismiss="modal">OK</a>
+      </div>
+    </div>
+  </body>
+</html>

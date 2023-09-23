@@ -1,0 +1,79 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Senior Design Project - {% block title %}Homepage{% endblock title %}</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="{% static 'templates/libs/bootstrap/bootstrap5.1.2.min.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'templates/css/bootstrap-style.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'templates/css/style.css' %}" />
+        <script type="text/javascript"
+            src="{% static 'templates/libs/bootstrap/bootstrap5.1.2.bundle.min.js' %}"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
+    </head>
+    <body>
+        <header>
+            <div class="container-fluid row pb-2">
+                <div class="col-sm-4">
+                    <img class="img-fluid w-50" alt="Florida tech logo"
+                        src="{% static 'templates/images/florida-tech-logo.png' %}" />
+                </div>
+                <div class="col-sm-4 text-center d-flex">
+                    <h1 id="title" class="m-auto">{% block banner %}Homepage{% endblock banner %}</h1>
+                </div>
+                <div class="col-sm-4">
+                    <img class="img-fluid float-end rounded border border-3 border-dark" alt="3D printer image"
+                        width="40%" src="{% static 'templates/images/printer.jpg' %}" />
+                </div>
+            </div>
+        </header>
+        <nav class="navbar navbar-expand-sm bg-light border-top border-bottom border-dark border-1">
+            <div class="container-fluid">
+                <!-- Navbar links -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapsibleNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                    <ul class="navbar-nav me-auto">
+                    	<li class="nav-item border-end border-1 border-dark"><a class="nav-link" href="/">Home</a></li>
+                    	{% if user.is_authenticated %}
+                    		<li class="nav-item border-end border-1 border-dark"><a class="nav-link" href="/accounts/logout">Logout</a></li>
+                    		<li class="nav-item border-end border-1 border-dark"><a class="nav-link" href="/upload">Upload a
+                                file</a></li>
+                            {% if user.is_staff %}
+                            	<li class="nav-item border-end border-1 border-dark"><a class="nav-link" href="/queue">Queue</a></li>
+                        	{% endif %}
+                    	{% else %}
+                        	<li class="nav-item border-end border-1 border-dark"><a class="nav-link" href="/accounts/login">Login</a></li>
+                        	<li class="nav-item border-end border-1 border-dark"><a class="nav-link" href='/register'>Register</a></li>
+
+                        {% endif %}
+                    </ul>
+                    <span class="navbar-text me-2">Welcome {{ request.user}}</span>
+                </div>
+            </div>
+        </nav>
+        <main class="pb-4 px-4">
+            {% block content %}
+            replace mex
+            {% endblock content %}
+        </main>
+        <footer class="text-center pt-5">
+        	{% if user.is_authenticated %}
+        		{% if user.is_staff %}
+	            	<p>| <a href="/">Home</a> | <a href="/accounts/logout">Logout</a> | <a href="/queue">Queue</a> | <a
+	                    href="/upload">Upload</a> |</p>
+        		{% else %}
+        			<p>| <a href="/">Home</a> | <a href="/accounts/logout">Logout</a> | <a href="/upload">Upload</a> |</p>
+        		{% endif %}
+        	{% else %}
+        		<p>| <a href="/">Home</a> | <a href="/accounts/login">Login</a> | <a href="/register">Register</a> |</p>
+        	{% endif %}
+            <br />
+            <p>Designed 2021</p>
+        </footer>
+    </body>
+</html>

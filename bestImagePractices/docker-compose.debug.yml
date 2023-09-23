@@ -1,0 +1,49 @@
+version: '3.4'
+
+services:
+    octoprint:
+        image: octoprint/octoprint
+        restart: unless-stopped
+        ports:
+            - 8080:80
+        devices:
+            - /dev/ttyAMA0:/dev/ttyAMA0
+            - /dev/ttyUSB0:/dev/ttyUSB69
+        volumes:
+            - octoprint:/octoprint
+        networks:
+            - secureprinting
+
+    secureprinting:
+        image: secureprinting
+        build:
+            context: .
+            dockerfile: ./Dockerfile
+        command:
+            [
+                "sh",
+                "-c",
+                "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 manage.py runserver 0.0.0.0:8000 --nothreading --noreload"
+            ]
+        restart: unless-stopped
+        ports:
+            - 80:8000
+            - 5678:5678
+        volumes:
+            - configs:/app/data
+            - uploads:/app/uploads
+        environment:
+            - OCTOPRINT_URL=http://octoprint:80
+            - OCTOPRINT_APIKEY=${OCTOPRINT_APIKEY}
+            - SECRET_KEY=${SECRET_KEY}
+            - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+        networks:
+            - secureprinting
+
+volumes:
+    octoprint: {}
+    configs: {}
+    uploads: {}
+
+networks:
+    secureprinting: {}

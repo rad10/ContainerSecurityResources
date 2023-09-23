@@ -1,0 +1,93 @@
+version: '2'
+
+services:
+  dvwa:
+    image: ghcr.io/digininja/dvwa:latest
+    environment:
+      DB_SERVER: db
+      DB_USER: ${DB_USER:-dvwa}
+      DB_PASSWORD: ${DB_PASSWORD:-p@ssw0rd}
+      DB_DATABASE: ${DB_DB:-dvwa}
+      DVWA_SECURITY_LEVEL: low
+    # configs:
+    #   - source: dvwa_config
+    #     target: /var/www/html/config/config.inc.php
+    #     uid: 'www-data'
+    #     gid: 'www-data'
+    #     mode: 0644
+    volumes:
+      - dvwa_uploads:/var/www/html/hackable/uploads:rw
+      - ./dvwa/dvwa.config.php:/var/www/html/config/config.inc.php:ro
+    depends_on:
+      - db
+    networks:
+      - dvwa
+      - dvwa_db
+    ports:
+      - 8080:80/tcp
+    restart: unless-stopped
+
+  db:
+    image: localhost/mysql:latest
+    build:
+      context: ./db
+      dockerfile: ./Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-dvwa}
+      MYSQL_DATABASE: ${DB_DB:-dvwa}
+      MYSQL_USER: ${DB_USER:-dvwa}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-p@ssw0rd}
+    volumes:
+      - db:/var/lib/mysql:rw
+      - db_udf:/usr/local/mysql/lib/plugin:rw
+      - ./db/init.d:/docker-entrypoint-initdb.d:ro
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      - dvwa_db
+      - empire_db
+    restart: unless-stopped
+
+  empire:
+    image: localhost/empire:latest
+    build:
+      context: ./empire
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./empire/httpscert.pem:/empire/empire/server/data/empire-chain.pem:ro
+      - ./empire/httpspriv.key:/empire/empire/server/data/empire-priv.key:ro
+      - ./empire/config.server.yml:/empire/empire/server/config.yaml:ro
+      - ./empire/agent.sh:/empire/agent.sh:ro
+      - ./empire/empire.conf:/empire/empire.conf:ro
+      - empire_data:/empire/empire/server/data:rw
+      - empire_downloads:/empire/empire/server/downloads:rw
+    cap_add:
+      - SYS_MODULE
+    depends_on:
+      - db
+    networks:
+      - empire
+      - empire_db
+    restart: unless-stopped
+
+# configs:
+#   dvwa_config:
+#     file: ./dvwa/dvwa.config.php
+
+volumes:
+  db:
+  db_udf:
+  dvwa_uploads:
+  empire_data:
+  empire_downloads:
+
+networks:
+  dvwa:
+    internal: false
+  empire:
+    internal: false
+  dvwa_db:
+    internal: true
+  empire_db:
+    internal: true

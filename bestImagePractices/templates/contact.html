@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Contacts</h1>
+{{ request.user}}
+<p>You can reach me at my email: <b>carl@carliscool.com</b></p>
+<!-- Passing context to the html -->
+<p>
+{{ my_text }}, {{ my_number }}
+</p>
+
+
+<!-- Using For loop in template -->
+<ul>
+{% for my_sub_item in my_list %}
+	{% if my_condition == True %}
+	<li>{{ forloop.counter }} - {{ my_sub_item|add:22 }}</li>
+	{% else %}
+	<li>{{ forloop.counter }} - {{ my_sub_item }}</li>
+	{% endif %}
+
+{% endfor %}
+</ul>
+
+
+
+{% endblock %}

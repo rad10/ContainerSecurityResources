@@ -1,0 +1,55 @@
+version: '3.4'
+
+services:
+  octoprint:
+    image: octoprint/octoprint
+    restart: unless-stopped
+    devices:
+      - /dev/ttyAMA0:/dev/ttyAMA0
+      - /dev/ttyUSB0:/dev/ttyUSB69
+    volumes:
+      - octoprint:/octoprint
+    networks:
+      - secureprinting
+
+  nginx:
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - secureprinting
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/ssl_password.txt:/etc/ssl_password.txt:ro
+      - ./nginx/cert.pem:/etc/nginx/conf.d/cert.pem:ro
+      - ./nginx/key.pem:/etc/nginx/conf.d/key.pem:ro
+    networks:
+      - secureprinting
+
+  secureprinting:
+    image: secureprinting
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file: .env
+    restart: unless-stopped
+    volumes:
+      - configs:/app/data
+      - uploads:/app/uploads
+    environment:
+      - OCTOPRINT_URL=http://octoprint:80
+      - OCTOPRINT_APIKEY=${OCTOPRINT_APIKEY}
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost}
+    networks:
+      - secureprinting
+
+volumes:
+  octoprint: {}
+  configs: {}
+  uploads: {}
+
+networks:
+  secureprinting: {}
