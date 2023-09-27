@@ -37,7 +37,7 @@ database:
 starkiller:
   repo: https://github.com/BC-SECURITY/Starkiller.git
   # Can be a branch, tag, or commit hash
-  ref: v2.4.3
+  ref: v2.5.3
   # for private-main, instead of updating the submodule, just work out of a local copy.
   # So devs can work off the latest changes and not worry about accidentally updating the submodule
   # for the downstream main branches.

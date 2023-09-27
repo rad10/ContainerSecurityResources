@@ -1,4 +1,4 @@
-FROM docker.io/bcsecurity/empire:v5.5.4
+FROM docker.io/bcsecurity/empire:v5.6.3
 
 RUN apt update \
  && apt install -y ncat nano
