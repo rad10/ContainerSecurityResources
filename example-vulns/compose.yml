@@ -50,10 +50,7 @@ services:
     restart: unless-stopped
 
   empire:
-    image: localhost/empire:latest
-    build:
-      context: ./empire
-      dockerfile: ./Dockerfile
+    image: docker.io/bcsecurity/empire:v5.6.3
     volumes:
       - ./empire/httpscert.pem:/empire/empire/server/data/empire-chain.pem:ro
       - ./empire/httpspriv.key:/empire/empire/server/data/empire-priv.key:ro
@@ -62,14 +59,25 @@ services:
       - ./empire/empire.conf:/empire/empire.conf:ro
       - empire_data:/empire/empire/server/data:rw
       - empire_downloads:/empire/empire/server/downloads:rw
-    cap_add:
-      - SYS_MODULE
     depends_on:
       - db
     networks:
       - empire
       - empire_db
     restart: unless-stopped
+
+  empire-victim:
+    image: localhost/victim:empire
+    build:
+      context: ./empireVictim
+      dockerfile: ./Dockerfile
+    depends_on:
+      - empire
+    networks:
+      - empire
+    cap_add:
+      - SYS_MODULE
+    restart: always
 
 # configs:
 #   dvwa_config:
